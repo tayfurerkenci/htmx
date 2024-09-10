@@ -2,6 +2,19 @@ import express from "express";
 
 const courseGoals = [];
 
+const renderGoalListItem = (id, text) => {
+  return `
+    <li>
+      <span>${text}</span>
+      <button 
+        hx-delete="/goals/${id}" 
+        hx-target="closest li"
+        hx-confirm="Are you sure you want to delete this goal?"
+      >Remove</button>
+    </li>
+  `;
+};
+
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
@@ -26,7 +39,10 @@ app.get("/", (req, res) => {
             id="goal-form" 
             hx-post="/goals"
             hx-target="#goals"
-            hx-swap="beforeend">
+            hx-swap="beforeend"
+            hx-on::after-request="this.reset()"
+            hx-disabled-elt="form button"
+          >
             <div>
               <label htmlFor="goal">Goal</label>
               <input type="text" id="goal" name="goal" />
@@ -35,19 +51,13 @@ app.get("/", (req, res) => {
           </form>
         </section>
         <section>
-          <ul id="goals" hx-swap="outerHTML">
+          <ul 
+            id="goals" 
+            hx-swap="outerHTML"
+            hx-confirm="Are you sure you want to delete this goal?"
+          >
           ${courseGoals
-            .map(
-              (goal) => `
-            <li id="goal-${goal.id}">
-              <span>${goal.text}</span>
-              <button 
-                hx-delete="/goals/${goal.id}" 
-                hx-target="#goal-${goal.id}"
-              >Remove</button>
-            </li>
-          `
-            )
+            .map((goal) => renderGoalListItem(goal.id, goal.text))
             .join("")}
           </ul>
         </section>
@@ -66,15 +76,11 @@ app.post("/goals", (req, res) => {
   // res.redirect("/");
 
   // Option 2: Send back the new goal
-  res.send(`
-    <li id="goal-${id}">
-      <span>${goal}</span>
-      <button
-        hx-delete="/goals/${id}" 
-        hx-target="#goal-${id}"
-      >Remove</button>
-    </li>
-  `);
+
+  setTimeout(() => {
+    res.send(renderGoalListItem(id, goal));
+  }, 3000);
+  // res.send(renderGoalListItem(id, goal));
 });
 
 app.delete("/goals/:id", (req, res) => {

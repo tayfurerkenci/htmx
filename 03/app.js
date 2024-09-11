@@ -4,6 +4,25 @@ import { AVAILABLE_LOCATIONS } from "./data/available-locations.js";
 import renderLocationsPage from "./views/index.js";
 import renderLocation from "./views/components/location.js";
 
+function getSuggestedLocations() {
+  const availableLocations = AVAILABLE_LOCATIONS.filter(
+    (location) => !INTERESTING_LOCATIONS.includes(location)
+  );
+
+  if (availableLocations.length < 2) return availableLocations;
+
+  const suggestedLocation1 = availableLocations.splice(
+    Math.floor(Math.random() * availableLocations.length),
+    1
+  )[0];
+  const suggestedLocation2 = availableLocations.splice(
+    Math.floor(Math.random() * availableLocations.length),
+    1
+  )[0];
+
+  return [suggestedLocation1, suggestedLocation2];
+}
+
 const app = express();
 
 const INTERESTING_LOCATIONS = [];
@@ -15,7 +34,14 @@ app.get("/", (req, res) => {
   const availableLocations = AVAILABLE_LOCATIONS.filter(
     (location) => !INTERESTING_LOCATIONS.includes(location)
   );
-  res.send(renderLocationsPage(availableLocations, INTERESTING_LOCATIONS));
+  const suggestedLocations = getSuggestedLocations();
+  res.send(
+    renderLocationsPage(
+      suggestedLocations,
+      availableLocations,
+      INTERESTING_LOCATIONS
+    )
+  );
 });
 
 app.post("/places", (req, res) => {
@@ -27,6 +53,8 @@ app.post("/places", (req, res) => {
     (location) => !INTERESTING_LOCATIONS.includes(location)
   );
 
+  const suggestLocations = getSuggestedLocations();
+
   // hx-swap-oob is used to replace the whole list of available locations
   // not the interesting locations
   res.send(`
@@ -36,6 +64,13 @@ app.post("/places", (req, res) => {
       ${availableLocations.map((location) => renderLocation(location)).join("")}
     </ul>
   `);
+});
+
+app.get("/suggested-locations", (req, res) => {
+  const suggestedLocations = getSuggestedLocations();
+  res.send(
+    suggestedLocations.map((location) => renderLocation(location)).join("")
+  );
 });
 
 app.delete("/places/:id", (req, res) => {
@@ -50,7 +85,7 @@ app.delete("/places/:id", (req, res) => {
   );
 
   res.send(`
-    <ul id="available-locations" class="locations" hx-swap-oob="true">
+    <ul id="available-locations" class="locations" hx-swap-oob="innerHTML">
       ${availableLocations.map((location) => renderLocation(location)).join("")}
     </ul>
   `);

@@ -12,6 +12,10 @@ This project covers the fundamental concepts and basic usage of HTMX, including 
 
 This project delves into more advanced features and techniques of HTMX, demonstrating how to build more complex and dynamic web applications.
 
+### 03 - Advanced HTMX Continue with PlacePicker Project
+
+This project delves into more advanced features and techniques of HTMX, demonstrating how to build more complex and dynamic web applications.
+
 ## Course Information
 
 The content in this repository is based on the "HTMX - The Practical Guide" Udemy course by Maximilian Schwarzmüller.

@@ -16,6 +16,8 @@ This project delves into more advanced features and techniques of HTMX, demonstr
 
 This project delves into more advanced features and techniques of HTMX, demonstrating how to build more complex and dynamic web applications.
 
+### 04 - HTMX Advanced Concepts - Requests & Responses
+
 ## Course Information
 
 The content in this repository is based on the "HTMX - The Practical Guide" Udemy course by Maximilian Schwarzmüller.
